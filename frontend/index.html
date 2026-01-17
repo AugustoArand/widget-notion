@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard GitHub - AugustoArand</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 GitHub Dashboard</h1>
+            <p>Estatísticas e informações do perfil</p>
+        </div>
+        
+        <div class="cards-grid">
+            <!-- Combined Profile and Metrics Section -->
+            <div class="card hero-section">
+                <!-- Profile Info -->
+                <div class="profile-compact" id="profileCard">
+                    <div class="loading">Carregando perfil...</div>
+                </div>
+                
+                <!-- Metrics Compact -->
+                <div class="metrics-compact">
+                    <div class="metric-compact">
+                        <div class="metric-icon">📚</div>
+                        <div class="metric-value" id="repoCount">--</div>
+                        <div class="metric-label">Repositórios Públicos</div>
+                    </div>
+                    
+                    <div class="metric-compact">
+                        <div class="metric-icon">👥</div>
+                        <div class="metric-value" id="followers">--</div>
+                        <div class="metric-label">Seguidores</div>
+                    </div>
+                    
+                    <div class="metric-compact">
+                        <div class="metric-icon">🤝</div>
+                        <div class="metric-value" id="following">--</div>
+                        <div class="metric-label">Seguindo</div>
+                    </div>
+                    
+                    <div class="metric-compact">
+                        <div class="metric-icon">⭐</div>
+                        <div class="metric-value" id="totalStars">--</div>
+                        <div class="metric-label">Total de Estrelas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Row: Languages and Repos -->
+            <div class="bottom-grid">
+                <!-- Top Languages Card -->
+                <div class="card languages-card">
+                    <div class="card-icon">💻</div>
+                    <div class="card-title">Linguagens Mais Usadas</div>
+                    <div class="card-content languages-section" id="languages">
+                        <div class="loading">Analisando repositórios...</div>
+                    </div>
+                </div>
+                
+                <!-- Recent Repos Card -->
+                <div class="card repos-card">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-title">Repositórios Recentes</div>
+                    <div class="repos-list" id="recentRepos">
+                        <div class="loading">Carregando repositórios...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

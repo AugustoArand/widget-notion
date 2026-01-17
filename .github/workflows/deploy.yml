@@ -1,0 +1,91 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+# Permissões necessárias para o GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permite apenas um deploy por vez
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Job de teste e validação
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+    
+    - name: Instalar dependências do backend
+      run: |
+        cd backend
+        npm ci
+    
+    - name: Verificar sintaxe dos arquivos
+      run: |
+        node -c backend/server.js
+        node -c frontend/js/api.js
+        node -c frontend/js/ui.js
+        node -c frontend/js/app.js
+    
+    - name: Validar HTML
+      run: |
+        if command -v tidy &> /dev/null; then
+          tidy -q -e frontend/index.html || true
+        else
+          echo "HTML validation skipped (tidy not installed)"
+        fi
+
+  # Job de deploy para GitHub Pages
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    # Executar apenas em push para main/master
+    if: github.event_name == 'push'
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Preparar arquivos para deploy
+      run: |
+        mkdir -p deploy
+        cp -r frontend/* deploy/
+        
+        # Atualizar URL da API para produção (se necessário)
+        # Descomente e ajuste se tiver uma API em produção
+        # sed -i "s|http://localhost:3000|https://sua-api.com|g" deploy/js/api.js
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './deploy'
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
