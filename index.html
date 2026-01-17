@@ -1,0 +1,335 @@
+<! DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard GitHub - AugustoArand</title>
+    <style>
+        * {
+            margin: 0;
+            padding:  0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align:  center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 42px;
+            margin-bottom:  10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom:  30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius:  16px;
+            padding: 24px;
+            box-shadow:  0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right:  0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow:  0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .card-icon {
+            font-size: 32px;
+            margin-bottom:  12px;
+        }
+        
+        .card-title {
+            font-size:  14px;
+            font-weight:  600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .card-metric {
+            font-size: 36px;
+            font-weight:  bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .card-content {
+            font-size: 14px;
+            color: #718096;
+            line-height:  1.6;
+        }
+        
+        .profile-card {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius:  50%;
+            border: 4px solid #667eea;
+        }
+        
+        .profile-info h2 {
+            font-size:  28px;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .profile-info p {
+            color: #718096;
+            margin-bottom: 4px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #e53e3e;
+            text-align: center;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size:  12px;
+            font-weight: 600;
+            margin:  4px 4px 4px 0;
+        }
+        
+        .lang-badge {
+            background: #e6f7ff;
+            color: #0969da;
+        }
+        
+        .repos-list {
+            margin-top: 12px;
+        }
+        
+        .repo-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .repo-item:last-child {
+            border-bottom: none;
+        }
+        
+        .repo-name {
+            font-weight: 600;
+            color: #0969da;
+            text-decoration: none;
+        }
+        
+        .repo-name:hover {
+            text-decoration: underline;
+        }
+        
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-top:  8px;
+            font-size: 12px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 GitHub Dashboard</h1>
+            <p>Estatísticas e informações do perfil</p>
+        </div>
+        
+        <div class="cards-grid">
+            <!-- Profile Card -->
+            <div class="card profile-card" id="profileCard">
+                <div class="loading">Carregando perfil...</div>
+            </div>
+            
+            <!-- Repositories Card -->
+            <div class="card">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Repositórios Públicos</div>
+                <div class="card-metric" id="repoCount">--</div>
+                <div class="card-content">Total de repositórios criados</div>
+            </div>
+            
+            <!-- Followers Card -->
+            <div class="card">
+                <div class="card-icon">👥</div>
+                <div class="card-title">Seguidores</div>
+                <div class="card-metric" id="followers">--</div>
+                <div class="card-content">Pessoas seguindo você</div>
+            </div>
+            
+            <!-- Following Card -->
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <div class="card-title">Seguindo</div>
+                <div class="card-metric" id="following">--</div>
+                <div class="card-content">Pessoas que você segue</div>
+            </div>
+            
+            <!-- Account Age Card -->
+            <div class="card">
+                <div class="card-icon">📅</div>
+                <div class="card-title">Conta Criada</div>
+                <div class="card-metric" id="accountAge">--</div>
+                <div class="card-content" id="createdDate">Calculando...</div>
+            </div>
+            
+            <!-- Top Languages Card -->
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-icon">💻</div>
+                <div class="card-title">Linguagens Mais Usadas</div>
+                <div class="card-content" id="languages">
+                    <div class="loading">Analisando repositórios...</div>
+                </div>
+            </div>
+            
+            <!-- Recent Repos Card -->
+            <div class="card" style="grid-column: 1 / -1;">
+                <div class="card-icon">⭐</div>
+                <div class="card-title">Repositórios Recentes</div>
+                <div class="repos-list" id="recentRepos">
+                    <div class="loading">Carregando repositórios...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const username = 'AugustoArand';
+        
+        // Fetch user profile data
+        async function fetchUserData() {
+            try {
+                const response = await fetch(`https://api.github.com/users/${username}`);
+                const data = await response.json();
+                
+                // Update profile card
+                const profileCard = document.getElementById('profileCard');
+                profileCard.innerHTML = `
+                    <img src="${data.avatar_url}" alt="Avatar" class="profile-avatar">
+                    <div class="profile-info">
+                        <h2>${data.name || data.login}</h2>
+                        <p><strong>@${data.login}</strong></p>
+                        <p>${data.bio || 'Sem biografia'}</p>
+                        ${data.location ? `<p>📍 ${data.location}</p>` : ''}
+                        ${data.company ? `<p>🏢 ${data.company}</p>` : ''}
+                    </div>
+                `;
+                
+                // Update metrics
+                document.getElementById('repoCount').textContent = data.public_repos;
+                document.getElementById('followers').textContent = data.followers;
+                document.getElementById('following').textContent = data.following;
+                
+                // Calculate account age
+                const created = new Date(data.created_at);
+                const now = new Date();
+                const years = Math.floor((now - created) / (365.25 * 24 * 60 * 60 * 1000));
+                document.getElementById('accountAge').textContent = `${years} anos`;
+                document.getElementById('createdDate').textContent = created.toLocaleDateString('pt-BR');
+                
+            } catch (error) {
+                document.getElementById('profileCard').innerHTML = '<div class="error">Erro ao carregar perfil</div>';
+            }
+        }
+        
+        // Fetch repositories
+        async function fetchRepos() {
+            try {
+                const response = await fetch(`https://api.github.com/users/${username}/repos? sort=updated&per_page=100`);
+                const repos = await response.json();
+                
+                // Count languages
+                const languages = {};
+                repos.forEach(repo => {
+                    if (repo.language) {
+                        languages[repo.language] = (languages[repo.language] || 0) + 1;
+                    }
+                });
+                
+                // Display top languages
+                const languagesHTML = Object.entries(languages)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 8)
+                    .map(([lang, count]) => `<span class="badge lang-badge">${lang} (${count})</span>`)
+                    .join('');
+                document.getElementById('languages').innerHTML = languagesHTML || 'Nenhuma linguagem detectada';
+                
+                // Display recent repos
+                const recentHTML = repos.slice(0, 5).map(repo => `
+                    <div class="repo-item">
+                        <a href="${repo.html_url}" target="_blank" class="repo-name">${repo. name}</a>
+                        <div class="stats-bar">
+                            ${repo.language ? `<span>💻 ${repo.language}</span>` : ''}
+                            <span>⭐ ${repo.stargazers_count}</span>
+                            <span>🔱 ${repo.forks_count}</span>
+                            <span>Atualizado:  ${new Date(repo.updated_at).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('recentRepos').innerHTML = recentHTML || 'Nenhum repositório encontrado';
+                
+            } catch (error) {
+                document. getElementById('languages').innerHTML = '<div class="error">Erro ao carregar dados</div>';
+                document.getElementById('recentRepos').innerHTML = '<div class="error">Erro ao carregar repositórios</div>';
+            }
+        }
+        
+        // Load all data
+        fetchUserData();
+        fetchRepos();
+    </script>
+</body>
+</html>
